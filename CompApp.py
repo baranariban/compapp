@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Dummy user credentials (Replace with a real authentication system)
-USER_CREDENTIALS = {"bariban": "0v6260", "gunaydin": "0v6260"}
+USER_CREDENTIALS = {"baranariban": "0v6260", "sertacaltinok": "0v6260", "zeynepegeuysal": "0v6260", "ahmetcangunaydin": "0v6260", "halilibrahimerol": "0v6260", "tubakahveci": "0v6260", "umutcangulletutan": "0v6260", "yigitcancavdarli": "0v6260"}
 
 def login():
     st.title("Login Page")
