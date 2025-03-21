@@ -58,7 +58,7 @@ for prop in sorted(all_properties):
 user_inputs = {}
 
 for prop in st.session_state.selected_properties:  
-    user_inputs[prop] = st.number_input(min_value=0.00, step=0.01)
+    user_inputs[prop] = st.number_input(f"Enter value for property {prop}:", min_value=0.00, step=0.01)
 
 matching_datasets = []
 for dataset, properties in datasets.items():
