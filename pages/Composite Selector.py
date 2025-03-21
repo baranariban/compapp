@@ -55,11 +55,9 @@ for prop in sorted(all_properties):
         else:
             st.session_state.selected_properties.add(prop)
 
-user_selection = {}
 user_inputs = {}
 
-for prop in st.session_state.selected_properties:
-    user_selection[prop] = st.selectbox(['Smaller than','Larger than','Equal to'])    
+for prop in st.session_state.selected_properties:  
     user_inputs[prop] = st.number_input(min_value=0.00, step=0.01)
 
 matching_datasets = []
