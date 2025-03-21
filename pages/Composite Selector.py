@@ -55,19 +55,38 @@ for prop in sorted(all_properties):
         else:
             st.session_state.selected_properties.add(prop)
 
+comparison_operators = {
+    "Smaller than": "<=",
+    "Larger than": ">=",
+    "Equal to": "="
+}
+
 user_inputs = {}
 
 for prop in st.session_state.selected_properties:  
-    user_inputs[prop] = st.number_input(f"Enter value for property {prop}:", min_value=0.00, step=0.01)
+    col1, col2 = st.columns([1,2])
+    with col1:
+        comparison = st.selectbox(
+            f"Comparison for {prop}",
+            options=list(comparison_operators.keys()),
+            key=f"{prop}_comp"
+        )
+    with col2:
+        value = st.number_input(
+            f"Value for {prop}",
+            min_value=0.00,
+            step=0.01,
+            key=f"{prop}_val"
+        )
 
 matching_datasets = []
 for dataset, properties in datasets.items():
     match = True
     for prop in st.session_state.selected_properties:
+        operator, user_value = user_inputs[prop]
         if not (properties[prop][0] <= user_inputs[prop] <= properties[prop][1]):
             match = False
             break  
-
     if match:
         matching_datasets.append(dataset)
 
