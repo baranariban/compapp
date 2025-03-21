@@ -59,14 +59,8 @@ user_selection = {}
 user_inputs = {}
 
 for prop in st.session_state.selected_properties:
-    col1, col2 = st.columns(
-    2,
-    vertical_alignment="top",
-)
-    with col1:
-        user_selection[prop] = st.selectbox(['Smaller than','Larger than','Equal to'])
-    with col2:     
-        user_inputs[prop] = st.number_input(min_value=0.00, step=0.01)
+    user_selection[prop] = st.selectbox(['Smaller than','Larger than','Equal to'])    
+    user_inputs[prop] = st.number_input(min_value=0.00, step=0.01)
 
 matching_datasets = []
 for dataset, properties in datasets.items():
