@@ -30,6 +30,7 @@ datasets = {
     "PPS 10% CF": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (5, 32), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.1, 0.86), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (67.6, 680), "Flexural Modulus (GPa)": (0.552, 57), "Density (kg/m3)": (1290, 1960)},
     "PPS 20% CF": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (15, 20), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.02, 0.25), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (27.6, 186), "Flexural Modulus (GPa)": (8.27, 18.6), "Density (kg/m3)": (1350, 1540)},
     "PPS 30% CF": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (5, 20), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.02, 0.60), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (46.9, 236), "Flexural Modulus (GPa)": (8.00, 32.00), "Density (kg/m3)": (1410, 1580)},
+    "PPS 40% CF": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (5, 10), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.05, 0.60), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (77.2, 234), "Flexural Modulus (GPa)": (11.00, 35.00), "Density (kg/m3)": (1480, 1720)},
 }
 
 all_properties = set()
