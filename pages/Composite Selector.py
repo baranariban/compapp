@@ -18,6 +18,7 @@ datasets = {
     "PEEK 5-45% PTFE": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (9, 65), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (80, 80), "Shrinkage (%)": (0.1, 2.5), "Glass Transition Temperature (°C)": (143, 170), "Tensile Strength (MPa)": (64, 155), "Flexural Modulus (GPa)": (2.41, 14), "Density (kg/m3)": (1320, 1690)},
     "PEEK ARAMID FIBER FILLED": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (5, 10), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (80, 80), "Shrinkage (%)": (0.05, 1.5), "Glass Transition Temperature (°C)": (143, 170), "Tensile Strength (MPa)": (75, 193), "Flexural Modulus (GPa)": (4.83, 22.8), "Density (kg/m3)": (1310, 1500)},
     "PESU UNFILLED": {"Cost (USD/kg)": (7.63, 13.08), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (27, 60), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (50, 50), "Shrinkage (%)": (0.6, 0.7), "Glass Transition Temperature (°C)": (210, 230), "Tensile Strength (MPa)": (70, 95), "Flexural Modulus (GPa)": (2.4, 2.9), "Density (kg/m3)": (1370, 1400)},
+    "PESU 10% GF": {"Cost (USD/kg)": (7.63, 13.08), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (25, 50.4), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (50, 50), "Shrinkage (%)": (0.1, 0.8), "Glass Transition Temperature (°C)": (225, 225), "Tensile Strength (MPa)": (66.9, 135), "Flexural Modulus (GPa)": (3.45, 8.62), "Density (kg/m3)": (1390, 1580)},
 }
 
 all_properties = set()
