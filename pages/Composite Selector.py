@@ -67,12 +67,13 @@ for prop in st.session_state.selected_properties:
     col1, col2 = st.columns([1,2])
     with col1:
         comparison = st.selectbox(
-            f"Comparison method for {prop}",
+            f"Comparison Method for {prop}",
             options=list(comparison_operators.keys()),
             key=f"{prop}_comp"
         )
     with col2:
         value = st.number_input(
+            f"Value for {prop}",
             min_value=0.00,
             step=0.01,
             key=f"{prop}_val"
