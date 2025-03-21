@@ -12,6 +12,7 @@ st.write("Click on the properties you want in your composite/polymer. Then fill 
 datasets = {
     "PEEK UNFILLED": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (40, 60), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (80, 80), "Shrinkage (%)": (1.1, 1.1), "Glass Transition Temperature (°C)": (143, 143), "Tensile Strength (MPa)": (70, 100), "Flexural Modulus (GPa)": (3.7, 3.9), "Density (kg/m3)": (1270, 1320)},
     "PEEK 30% GF": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (15, 20), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (80, 80), "Shrinkage (%)": (0.2, 1.0), "Glass Transition Temperature (°C)": (143, 143), "Tensile Strength (MPa)": (150, 180), "Flexural Modulus (GPa)": (9, 10.3), "Density (kg/m3)": (1490, 1540)},
+    "PEEK 30% CF": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (15, 40), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (80, 80), "Shrinkage (%)": (0.1, 0.4), "Glass Transition Temperature (°C)": (143, 143), "Tensile Strength (MPa)": (200, 220), "Flexural Modulus (GPa)": (13, 20), "Density (kg/m3)": (1440, 1440)},
 }
 
 all_properties = set()
