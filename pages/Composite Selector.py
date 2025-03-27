@@ -40,61 +40,58 @@ datasets = {
     "PPS 10-30% ARAMID FIBER": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (10, 15), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.05, 1.40), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (45, 134), "Flexural Modulus (GPa)": (3.50, 2.70), "Density (kg/m3)": (1250, 1560)}
 }
 
-all_properties = set()
+st.subheader("Select the Properties You Want to Filter")
 
-for dataset in datasets.values():
-    all_properties.update(dataset.keys())
+properties = [
+    "Cost (USD/kg)",
+    "Coefficient of Thermal Expansion (CTE) (µstrain/°C)",
+    "Interfacial Properties with Carbon Fiber (IFSS, MPa)",
+    "Shrinkage (%)",
+    "Glass Transition Temperature (°C)",
+    "Tensile Strength (MPa)",
+    "Flexural Modulus (GPa)",
+    "Density (kg/m3)"
+]
 
-if "selected_properties" not in st.session_state:
-    st.session_state.selected_properties = set()
+selected_filters = {}
 
-for prop in sorted(all_properties):
-    if st.button(f"Filter by {prop}"):
-        if prop in st.session_state.selected_properties:
-            st.session_state.selected_properties.remove(prop)
-        else:
-            st.session_state.selected_properties.add(prop)
+for prop in properties:
+    if st.checkbox(f"Filter by {prop}"):
+        col1, col2 = st.columns([1, 2])
+        with col1:
+            condition = st.selectbox(f"Condition for {prop}", ["smaller than", "larger than", "equal to"], key=f"cond_{prop}")
+        with col2:
+            value = st.number_input(f"Value for {prop}", key=f"val_{prop}")
+        selected_filters[prop] = (condition, value)
 
-comparison_operators = {
-    "Smaller than": "<=",
-    "Larger than": ">=",
-    "Equal to": "="
-}
+matching_polymers = []
 
-user_inputs = {}
-
-for prop in st.session_state.selected_properties:  
-    col1, col2 = st.columns([1,2])
-    with col1:
-        comparison = st.selectbox(
-            f"Comparison Method for {prop}",
-            options=list(comparison_operators.keys()),
-            key=f"{prop}_comp"
-        )
-    with col2:
-        value = st.number_input(
-            f"Value for {prop}",
-            min_value=0.00,
-            step=0.01,
-            key=f"{prop}_val"
-        )
-
-matching_datasets = []
-for dataset, properties in datasets.items():
+for polymer, properties_dict in datasets.items():
     match = True
-    for prop in st.session_state.selected_properties:
-        operator, user_value = user_inputs[prop]
-        if not (properties[prop][0] <= user_inputs[prop] <= properties[prop][1]):
-            match = False
-            break  
+    for prop, (condition, user_val) in selected_filters.items():
+        min_val, max_val = properties_dict[prop]
+
+        if condition == "smaller than":
+            if not (min_val <= user_val <= max_val or max_val < user_val):
+                match = False
+                break
+
+        elif condition == "larger than":
+            if not (min_val <= user_val <= max_val or min_val > user_val):
+                match = False
+                break
+
+        elif condition == "equal to":
+            if not (min_val <= user_val <= max_val):
+                match = False
+                break
+
     if match:
-        matching_datasets.append(dataset)
+        matching_polymers.append(polymer)
 
-if matching_datasets:
-    result = f"The input values match with dataset(s): **{', '.join(matching_datasets)}**"
-elif st.session_state.selected_properties:
-    result = "No dataset includes the selected values."
+st.subheader("Matching Composites")
+if matching_polymers:
+    for name in matching_polymers:
+        st.write(f"✅ {name}")
 else:
-    result = "Please select at least one property to filter by."
-
-st.write(result)
+    st.warning("No matching composites found.")
