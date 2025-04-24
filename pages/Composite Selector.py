@@ -230,3 +230,61 @@ if st.session_state.show_weights:
         st.subheader("🏆 Ranked Composites by 100-Point Weighted Score")
         for i, (name, score) in enumerate(sorted_scores, 1):
             st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
+
+import plotly.graph_objects as go
+
+if "scores" in locals() and scores:
+    if st.button("📊 Show stacked bar chart of scores"):
+        st.subheader("📊 Composite Score Breakdown by Property")
+
+        # Her kompozit için property katkılarını ayrı ayrı tut
+        all_data = {}
+        for name in scores:
+            all_data[name] = {}
+
+        for prop in selected_filters.keys():
+            weight = weights[prop]
+            for name in scores:
+                min_val, max_val = st.session_state.datasets[name][prop]
+                user_val = selected_filters[prop][1]
+
+                if min_val == max_val or user_val is None:
+                    contribution = 0
+                elif user_val < min_val or user_val > max_val:
+                    contribution = 0
+                else:
+                    center = (min_val + max_val) / 2
+                    score = 1 - abs(user_val - center) / (max_val - min_val)
+                    contribution = score * weight
+
+                all_data[name][prop] = round(contribution, 2)
+
+        # Kompozitleri toplam puanına göre sırala
+        sorted_names = [k for k, v in sorted(scores.items(), key=lambda x: x[1], reverse=True)]
+
+        fig = go.Figure()
+
+        for prop in selected_filters.keys():
+            y_vals = [all_data[name][prop] for name in sorted_names]
+            hover_texts = [
+                f"{prop}<br>Score: {all_data[name][prop]}<br>Weight: {weights[prop]}"
+                for name in sorted_names
+            ]
+
+            fig.add_trace(go.Bar(
+                name=prop,
+                x=sorted_names,
+                y=y_vals,
+                hovertext=hover_texts,
+                hoverinfo="text"
+            ))
+
+        fig.update_layout(
+            barmode='stack',
+            xaxis_title="Composite",
+            yaxis_title="Total Score (out of 100)",
+            title="Composite Score Breakdown",
+            height=600
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
