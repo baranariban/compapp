@@ -149,12 +149,10 @@ else:
 if matching_polymers:
     if st.button("Show detailed table of matching composites"):
         table_data = {}
-
         for name in matching_polymers:
-            properties_formatted = {}
-            for prop, (min_val, max_val) in datasets[name].items():
-                properties_formatted[prop] = f"{min_val}–{max_val}"
-            table_data[name] = properties_formatted
-
+            prop_vals = {}
+            for prop, (min_val, max_val) in st.session_state.datasets[name].items():
+                prop_vals[prop] = f"{min_val}–{max_val}"
+            table_data[name] = prop_vals
         df = pd.DataFrame(table_data)
         st.dataframe(df)
