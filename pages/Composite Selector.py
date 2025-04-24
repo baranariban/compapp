@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     st.error("Unauthorized access. Please log in.")
@@ -95,3 +96,16 @@ if matching_polymers:
         st.write(f"✅ {name}")
 else:
     st.warning("No matching composites found.")
+
+if matching_polymers:
+    if st.button("Show detailed table of matching composites"):
+        table_data = {}
+
+        for name in matching_polymers:
+            properties_formatted = {}
+            for prop, (min_val, max_val) in datasets[name].items():
+                properties_formatted[prop] = f"{min_val}–{max_val}"
+            table_data[name] = properties_formatted
+
+        df = pd.DataFrame(table_data)
+        st.dataframe(df)
