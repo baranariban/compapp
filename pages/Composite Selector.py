@@ -171,7 +171,15 @@ if matching_polymers:
         df = pd.DataFrame(table_data)
         st.dataframe(df)
 
+# Skorlama kutusunu açmak için kontrol
+if "show_weights" not in st.session_state:
+    st.session_state.show_weights = False
+
 if st.button("🔢 Score and rank matching composites"):
+    st.session_state.show_weights = True
+
+# Eğer kullanıcı butona bastıysa ağırlık ekranını göster
+if st.session_state.show_weights:
     st.subheader("Set importance (weight) for each selected property")
 
     weights = {}
@@ -182,14 +190,14 @@ if st.button("🔢 Score and rank matching composites"):
             f"Weight for '{prop}' (0–100)",
             min_value=0,
             max_value=100,
-            value=0,
+            value=st.session_state.get(f"weight_{prop}", 0),
             step=1,
             key=f"weight_{prop}"
         )
         weights[prop] = weight
         total_weight += weight
 
-    st.markdown(f"🧮 **Total weight: {total_weight}/100**")
+    st.markdown(f"📊 **Total weight: {total_weight}/100**")
     if total_weight != 100:
         st.warning("⚠️ Total weight must be exactly 100 to proceed.")
     else:
@@ -205,7 +213,6 @@ if st.button("🔢 Score and rank matching composites"):
                 if min_val == max_val or user_val is None:
                     continue
 
-                # Normalize uygunluk skoru (0 ile 1 arası)
                 if user_val < min_val or user_val > max_val:
                     score = 0
                 else:
@@ -214,10 +221,10 @@ if st.button("🔢 Score and rank matching composites"):
 
                 total_score += score * weight
 
-            # Toplam puanı 100'e ölçekle
             final_score = round(total_score, 2)
             scores[name] = final_score
 
+        # Sıralama ve gösterim
         sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
         st.subheader("🏆 Ranked Composites by 100-Point Weighted Score")
