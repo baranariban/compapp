@@ -171,47 +171,55 @@ if matching_polymers:
         df = pd.DataFrame(table_data)
         st.dataframe(df)
 
-# Skor hesaplamasını başlatan tuş
 if st.button("🔢 Score and rank matching composites"):
-    st.subheader("Set importance for each property")
+    st.subheader("Set importance (weight) for each selected property")
 
-    # Kullanıcıdan önem seviyelerini al
-    importance_weights = {}
-    for prop in properties:
-        importance = st.selectbox(
-            f"Importance of {prop}",
-            ["Low", "Medium", "High"],
-            key=f"importance_{prop}"
+    weights = {}
+    total_weight = 0
+
+    for prop in selected_filters.keys():
+        weight = st.number_input(
+            f"Weight for '{prop}' (0–100)",
+            min_value=0,
+            max_value=100,
+            value=0,
+            step=1,
+            key=f"weight_{prop}"
         )
-        importance_weights[prop] = {"Low": 1, "Medium": 2, "High": 3}[importance]
+        weights[prop] = weight
+        total_weight += weight
 
-    # Skorları hesapla
-    scores = {}
+    st.markdown(f"🧮 **Total weight: {total_weight}/100**")
+    if total_weight != 100:
+        st.warning("⚠️ Total weight must be exactly 100 to proceed.")
+    else:
+        # Skor hesaplama
+        scores = {}
 
-    for name in matching_polymers:
-        total_score = 0
-        for prop in properties:
-            min_val, max_val = st.session_state.datasets[name][prop]
-            user_condition, user_val = selected_filters.get(prop, ("", None))
-            importance = importance_weights[prop]
+        for name in matching_polymers:
+            total_score = 0
+            for prop, (condition, user_val) in selected_filters.items():
+                min_val, max_val = st.session_state.datasets[name][prop]
+                weight = weights[prop]
 
-            if user_val is None or min_val == max_val:
-                continue
+                if min_val == max_val or user_val is None:
+                    continue
 
-            if user_val < min_val or user_val > max_val:
-                score = 0
-            else:
-                # Normalize uygunluk
-                center = (min_val + max_val) / 2
-                score = 1 - abs(user_val - center) / (max_val - min_val)
+                # Normalize uygunluk skoru (0 ile 1 arası)
+                if user_val < min_val or user_val > max_val:
+                    score = 0
+                else:
+                    center = (min_val + max_val) / 2
+                    score = 1 - abs(user_val - center) / (max_val - min_val)
 
-            total_score += score * importance
+                total_score += score * weight
 
-        scores[name] = round(total_score, 3)
+            # Toplam puanı 100'e ölçekle
+            final_score = round(total_score, 2)
+            scores[name] = final_score
 
-    # Sıralayıp göster
-    sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
-    st.subheader("🏆 Ranked Composites by Weighted Score")
-    for i, (name, score) in enumerate(sorted_scores, 1):
-        st.write(f"{i}. **{name}** — Score: {score}")
+        st.subheader("🏆 Ranked Composites by 100-Point Weighted Score")
+        for i, (name, score) in enumerate(sorted_scores, 1):
+            st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
