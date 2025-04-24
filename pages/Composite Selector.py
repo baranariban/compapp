@@ -5,19 +5,6 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
     st.error("Unauthorized access. Please log in.")
     st.stop()
 
-properties = [
-    "Cost (USD/kg)",
-    "Coefficient of Thermal Expansion (CTE) (µstrain/°C)",
-    "Interfacial Properties with Carbon Fiber (IFSS, MPa)",
-    "Shrinkage (%)",
-    "Glass Transition Temperature (°C)",
-    "Tensile Strength (MPa)",
-    "Flexural Modulus (GPa)",
-    "Density (kg/m3)"
-]
-
-selected_filters = {}
-
 st.title("CompApp: Composite Application")
 st.markdown("### :red[by Ali Baran Arıban]")
 st.title("Composite Selector")
@@ -54,6 +41,17 @@ if "datasets" not in st.session_state:
         "PPS 10-70% PTFE": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (50, 100), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.2, 2.0), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (11, 160), "Flexural Modulus (GPa)": (1.31, 15), "Density (kg/m3)": (1420, 2030)},
         "PPS 10-30% ARAMID FIBER": {"Cost (USD/kg)": (7.63, 14.17), "Coefficient of Thermal Expansion (CTE) (µstrain/°C)": (10, 15), "Interfacial Properties with Carbon Fiber (IFSS, MPa)": (40, 40), "Shrinkage (%)": (0.05, 1.40), "Glass Transition Temperature (°C)": (90, 90), "Tensile Strength (MPa)": (45, 134), "Flexural Modulus (GPa)": (3.50, 2.70), "Density (kg/m3)": (1250, 1560)}
     }
+
+properties = [
+    "Cost (USD/kg)",
+    "Coefficient of Thermal Expansion (CTE) (µstrain/°C)",
+    "Interfacial Properties with Carbon Fiber (IFSS, MPa)",
+    "Shrinkage (%)",
+    "Glass Transition Temperature (°C)",
+    "Tensile Strength (MPa)",
+    "Flexural Modulus (GPa)",
+    "Density (kg/m3)"
+]
 
 option = st.radio("Choose how you'd like to proceed:", [
     "Use embedded dataset",
@@ -104,6 +102,8 @@ elif option == "Upload dataset from Excel":
 
 
 st.subheader("Select the Properties You Want to Filter")
+
+selected_filters = {}
 
 for prop in properties:
     if st.checkbox(f"Filter by {prop}"):
