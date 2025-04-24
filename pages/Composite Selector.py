@@ -1,5 +1,19 @@
 import streamlit as st
 import pandas as pd
+from io import BytesIO
+
+def generate_excel_template():
+    columns = ["Name"]
+    for prop in properties:
+        columns.append(f"{prop} min")
+        columns.append(f"{prop} max")
+    
+    df_template = pd.DataFrame(columns=columns)
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df_template.to_excel(writer, index=False, sheet_name='Template')
+    output.seek(0)
+    return output
 
 if "authenticated" not in st.session_state or not st.session_state["authenticated"]:
     st.error("Unauthorized access. Please log in.")
@@ -76,22 +90,23 @@ if option == "Add manual entry":
             st.success(f"{composite_name} added successfully.")
 
 elif option == "Upload dataset from Excel":
-    st.info("""📄 Please make sure your Excel file follows this format:
-    
-- The first column must be **"Name"** (composite name).
-- For each property, there should be **two columns**: 
-    - One for the **minimum value** labeled as `Property name min`
-    - One for the **maximum value** labeled as `Property name max`
+    st.info("""📄 Please download the template, fill in your data, and upload it back.
 
-✅ Example column headers:
-- Name, Cost (USD/kg) min, Cost (USD/kg) max, Coefficient of Thermal Expansion (CTE) (µstrain/°C) min, ...
+- Include values for all properties.
+- Do **not change column names**.
 
-💡 Note: Do not forget to include all 8 properties with their min/max columns.
-""")
+📥 You can download the blank Excel file using the button below.""")
 
-    uploaded_file = st.file_uploader("Upload Excel file (columns: name + 8 properties min & max)", type=["xlsx", "csv"])
+    st.download_button(
+        label="📥 Download Excel Template",
+        data=generate_excel_template(),
+        file_name="composite_template.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    uploaded_file = st.file_uploader("Upload your completed Excel file here", type=["xlsx"])
     if uploaded_file:
-        df = pd.read_excel(uploaded_file) if uploaded_file.name.endswith("xlsx") else pd.read_csv(uploaded_file)
+        df = pd.read_excel(uploaded_file)
         for idx, row in df.iterrows():
             name = row["Name"]
             entry = {}
@@ -99,7 +114,6 @@ elif option == "Upload dataset from Excel":
                 entry[prop] = (row[f"{prop} min"], row[f"{prop} max"])
             st.session_state.datasets[name] = entry
         st.success("All composites from Excel uploaded successfully.")
-
 
 st.subheader("Select the Properties You Want to Filter")
 
