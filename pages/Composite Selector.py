@@ -5,6 +5,19 @@ if "authenticated" not in st.session_state or not st.session_state["authenticate
     st.error("Unauthorized access. Please log in.")
     st.stop()
 
+properties = [
+    "Cost (USD/kg)",
+    "Coefficient of Thermal Expansion (CTE) (µstrain/°C)",
+    "Interfacial Properties with Carbon Fiber (IFSS, MPa)",
+    "Shrinkage (%)",
+    "Glass Transition Temperature (°C)",
+    "Tensile Strength (MPa)",
+    "Flexural Modulus (GPa)",
+    "Density (kg/m3)"
+]
+
+selected_filters = {}
+
 st.title("CompApp: Composite Application")
 st.markdown("### :red[by Ali Baran Arıban]")
 st.title("Composite Selector")
@@ -91,19 +104,6 @@ elif option == "Upload dataset from Excel":
 
 
 st.subheader("Select the Properties You Want to Filter")
-
-properties = [
-    "Cost (USD/kg)",
-    "Coefficient of Thermal Expansion (CTE) (µstrain/°C)",
-    "Interfacial Properties with Carbon Fiber (IFSS, MPa)",
-    "Shrinkage (%)",
-    "Glass Transition Temperature (°C)",
-    "Tensile Strength (MPa)",
-    "Flexural Modulus (GPa)",
-    "Density (kg/m3)"
-]
-
-selected_filters = {}
 
 for prop in properties:
     if st.checkbox(f"Filter by {prop}"):
