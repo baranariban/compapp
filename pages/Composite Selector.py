@@ -170,3 +170,48 @@ if matching_polymers:
             table_data[name] = prop_vals
         df = pd.DataFrame(table_data)
         st.dataframe(df)
+
+# Skor hesaplamasını başlatan tuş
+if st.button("🔢 Score and rank matching composites"):
+    st.subheader("Set importance for each property")
+
+    # Kullanıcıdan önem seviyelerini al
+    importance_weights = {}
+    for prop in properties:
+        importance = st.selectbox(
+            f"Importance of {prop}",
+            ["Low", "Medium", "High"],
+            key=f"importance_{prop}"
+        )
+        importance_weights[prop] = {"Low": 1, "Medium": 2, "High": 3}[importance]
+
+    # Skorları hesapla
+    scores = {}
+
+    for name in matching_polymers:
+        total_score = 0
+        for prop in properties:
+            min_val, max_val = st.session_state.datasets[name][prop]
+            user_condition, user_val = selected_filters.get(prop, ("", None))
+            importance = importance_weights[prop]
+
+            if user_val is None or min_val == max_val:
+                continue
+
+            if user_val < min_val or user_val > max_val:
+                score = 0
+            else:
+                # Normalize uygunluk
+                center = (min_val + max_val) / 2
+                score = 1 - abs(user_val - center) / (max_val - min_val)
+
+            total_score += score * importance
+
+        scores[name] = round(total_score, 3)
+
+    # Sıralayıp göster
+    sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+    st.subheader("🏆 Ranked Composites by Weighted Score")
+    for i, (name, score) in enumerate(sorted_scores, 1):
+        st.write(f"{i}. **{name}** — Score: {score}")
