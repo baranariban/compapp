@@ -289,15 +289,12 @@ if "scores" in locals() and scores:
 
         st.plotly_chart(fig, use_container_width=True)
 
-# İlk başta kontrol flag'i ayarla
 if "show_cost_analysis" not in st.session_state:
     st.session_state.show_cost_analysis = False
 
-# Tuş basımı kontrolü
 if st.button("💰 Cost Analysis for Matching Composites"):
     st.session_state.show_cost_analysis = True
 
-# Eğer analiz açıldıysa devam et
 if st.session_state.show_cost_analysis and matching_polymers:
     st.subheader("📐 Enter volume of your part")
 
@@ -307,6 +304,7 @@ if st.session_state.show_cost_analysis and matching_polymers:
         st.subheader("📊 Estimated Production Cost per Composite")
 
         cost_results = []
+        cost_warning_flag = False
 
         for name in matching_polymers:
             data = st.session_state.datasets[name]
@@ -316,6 +314,9 @@ if st.session_state.show_cost_analysis and matching_polymers:
 
             cost_min, cost_max = data["Cost (USD/kg)"]
             cost_avg = (cost_min + cost_max) / 2
+
+            if cost_min == 0 and cost_max == 0:
+                cost_warning_flag = True
 
             mass = volume_m3 * density_avg  # in kg
             total_cost = mass * cost_avg
@@ -328,7 +329,18 @@ if st.session_state.show_cost_analysis and matching_polymers:
                 "Estimated Part Cost (USD)": round(total_cost, 2)
             })
 
-        st.dataframe(pd.DataFrame(cost_results))
+        df = pd.DataFrame(cost_results)
+
+        # Eğer maliyet eksikse uyarı ver
+        if cost_warning_flag:
+            st.warning("⚠️ Some composites have missing cost data. Please ensure cost values are entered for accurate results.")
+
+        # Stilize tablo
+        def highlight_cost(val):
+            return "font-weight: bold; color: green;" if isinstance(val, (int, float)) else ""
+
+        st.dataframe(
+            df.style.applymap(highlight_cost, subset=["Average Cost (USD/kg)", "Estimated Part Cost (USD)"])
+        )
     else:
         st.warning("Please enter a valid volume greater than 0.")
-
