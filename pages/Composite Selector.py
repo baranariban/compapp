@@ -288,3 +288,39 @@ if "scores" in locals() and scores:
         )
 
         st.plotly_chart(fig, use_container_width=True)
+
+if matching_polymers:
+    if st.button("💰 Cost Analysis for Matching Composites"):
+        st.subheader("📐 Enter volume of your part")
+
+        volume_m3 = st.number_input("Volume of the part (in cubic meters, m³)", min_value=0.0, step=0.001, format="%.6f")
+
+        if volume_m3 > 0:
+            st.subheader("📊 Estimated Production Cost per Composite")
+
+            cost_results = []
+
+            for name in matching_polymers:
+                data = st.session_state.datasets[name]
+                
+                density_min, density_max = data["Density (kg/m3)"]
+                density_avg = (density_min + density_max) / 2
+
+                cost_min, cost_max = data["Cost (USD/kg)"]
+                cost_avg = (cost_min + cost_max) / 2
+
+                mass = volume_m3 * density_avg  # in kg
+                total_cost = mass * cost_avg
+
+                cost_results.append({
+                    "Composite": name,
+                    "Average Density (kg/m³)": round(density_avg, 2),
+                    "Average Cost (USD/kg)": round(cost_avg, 2),
+                    "Estimated Mass (kg)": round(mass, 3),
+                    "Estimated Part Cost (USD)": round(total_cost, 2)
+                })
+
+            # Göster
+            st.dataframe(pd.DataFrame(cost_results))
+        else:
+            st.warning("Please enter a valid volume greater than 0.")
