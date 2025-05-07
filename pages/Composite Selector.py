@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO
+from fpdf import FPDF
+import datetime
 
 def evaluate_score(condition, user_val, min_val, max_val):
     if user_val is None or min_val is None or max_val is None:
@@ -369,3 +371,49 @@ if st.session_state.show_cost_analysis and matching_polymers:
         )
     else:
         st.warning("Please enter a valid volume greater than 0.")
+
+def generate_pdf(scores, selected_filters, weights):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, "Composite Selection Report", ln=True)
+
+    pdf.set_font("Arial", "", 12)
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    pdf.cell(0, 10, f"Generated on: {now}", ln=True)
+
+    pdf.ln(5)
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, "Selected Filters:", ln=True)
+
+    pdf.set_font("Arial", "", 11)
+    for prop, (condition, user_val) in selected_filters.items():
+        pdf.cell(0, 8, f"- {prop}: {condition} {user_val}", ln=True)
+
+    pdf.ln(5)
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, "Weights:", ln=True)
+
+    pdf.set_font("Arial", "", 11)
+    for prop, w in weights.items():
+        pdf.cell(0, 8, f"- {prop}: {w}", ln=True)
+
+    pdf.ln(5)
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, "Top Ranked Composites:", ln=True)
+
+    pdf.set_font("Arial", "", 11)
+    for i, (name, score) in enumerate(sorted(scores.items(), key=lambda x: x[1], reverse=True), 1):
+        pdf.cell(0, 8, f"{i}. {name}: {score} / 100", ln=True)
+
+    return pdf.output(dest='S').encode('latin1')
+
+if "scores" in locals() and scores:
+    if st.button("📥 Download PDF Report"):
+        pdf_bytes = generate_pdf(scores, selected_filters, weights)
+        st.download_button(
+            label="Download PDF",
+            data=pdf_bytes,
+            file_name="composite_report.pdf",
+            mime="application/pdf"
+        )
