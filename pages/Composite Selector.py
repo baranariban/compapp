@@ -315,6 +315,40 @@ if "scores" in locals() and scores:
 
         st.plotly_chart(fig, use_container_width=True)
 
+if st.button("🕸️ Show radar chart for top 3 composites"):
+    st.subheader("🕸️ Radar Chart: Property Profile of Top 3 Composites")
+
+    top3_names = [k for k, v in sorted(scores.items(), key=lambda x: x[1], reverse=True)][:3]
+    categories = list(selected_filters.keys())
+
+    fig = Figure()
+
+    for name in top3_names:
+        values = []
+        for prop in categories:
+            condition, user_val = selected_filters[prop]
+            min_val, max_val = st.session_state.datasets[name][prop]
+            score = evaluate_score(condition, user_val, min_val, max_val)
+            values.append(round(score * 100, 2))
+
+        values.append(values[0])  # Kapanış için ilk değeri ekle
+        fig.add_trace(Scatterpolar(
+            r=values,
+            theta=categories + [categories[0]],
+            fill='toself',
+            name=name
+        ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100])
+        ),
+        showlegend=True,
+        height=600
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
 if "show_cost_analysis" not in st.session_state:
     st.session_state.show_cost_analysis = False
 
