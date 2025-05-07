@@ -271,20 +271,13 @@ if "scores" in locals() and scores:
             all_data[name] = {}
 
         for prop in selected_filters.keys():
-            weight = weights[prop]
+            condition, user_val = selected_filters[prop]
             for name in scores:
                 min_val, max_val = st.session_state.datasets[name][prop]
-                user_val = selected_filters[prop][1]
+                weight = weights[prop] / 100  # normalize et
 
-                if min_val == max_val or user_val is None:
-                    contribution = 0
-                elif user_val < min_val or user_val > max_val:
-                    contribution = 0
-                else:
-                    center = (min_val + max_val) / 2
-                    condition, _ = selected_filters[prop]
-                    score = evaluate_score(condition, user_val, min_val, max_val)
-                    contribution = score * weight
+                score = evaluate_score(condition, user_val, min_val, max_val)
+                contribution = score * weight * 100  # % üzerinden katkı
 
                 all_data[name][prop] = round(contribution, 2)
 
@@ -296,7 +289,7 @@ if "scores" in locals() and scores:
         for prop in selected_filters.keys():
             y_vals = [all_data[name][prop] for name in sorted_names]
             hover_texts = [
-                f"{prop}<br>Score: {all_data[name][prop]}<br>Weight: {weights[prop]}"
+                f"{prop}<br>Contribution: {all_data[name][prop]}<br>Weight: {weights[prop]}"
                 for name in sorted_names
             ]
 
