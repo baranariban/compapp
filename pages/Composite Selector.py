@@ -179,8 +179,8 @@ for polymer, properties_dict in st.session_state.datasets.items():
                 match = False
                 break
 
-        elif condition == "larger than":
-            if not (min_val <= user_val <= max_val or min_val > user_val):
+        if condition == "larger than":
+            if user_val > max_val:
                 match = False
                 break
 
@@ -282,7 +282,8 @@ if "scores" in locals() and scores:
                     contribution = 0
                 else:
                     center = (min_val + max_val) / 2
-                    score = 1 - abs(user_val - center) / (max_val - min_val)
+                    condition, _ = selected_filters[prop]
+                    score = evaluate_score(condition, user_val, min_val, max_val)
                     contribution = score * weight
 
                 all_data[name][prop] = round(contribution, 2)
