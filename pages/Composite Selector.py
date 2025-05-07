@@ -277,7 +277,7 @@ if "scores" in locals() and scores:
                 weight = weights[prop] / 100  # normalize et
 
                 score = evaluate_score(condition, user_val, min_val, max_val)
-                contribution = score * weight * 100  # % üzerinden katkı
+                contribution = score * weight * 100  # normalize edilmiş katkı
 
                 all_data[name][prop] = round(contribution, 2)
 
@@ -289,7 +289,7 @@ if "scores" in locals() and scores:
         for prop in selected_filters.keys():
             y_vals = [all_data[name][prop] for name in sorted_names]
             hover_texts = [
-                f"{prop}<br>Contribution: {all_data[name][prop]}<br>Weight: {weights[prop]}"
+                f"{prop}<br>Contribution to total: {all_data[name][prop]}<br>Weight: {weights[prop]}"
                 for name in sorted_names
             ]
 
