@@ -6,4 +6,3 @@ altair
 openpyxl
 xlsxwriter
 plotly
-plotly.graph_objects
