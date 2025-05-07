@@ -3,34 +3,43 @@ import pandas as pd
 from io import BytesIO
 
 def evaluate_score(condition, user_val, min_val, max_val):
-    if min_val == max_val:
-        return 1.0 if user_val == min_val else 0.0
-
-    if user_val is None:
+    if user_val is None or min_val is None or max_val is None:
         return 0.0
+
+    if min_val == max_val:
+        if user_val == min_val:
+            return 1.05  # Tam eşleşmeye bonus
+        else:
+            return max(0.0, 1 - abs(user_val - min_val) / abs(min_val))
+
+    range_val = max_val - min_val
+    center = (min_val + max_val) / 2
 
     if condition == "smaller than":
         if user_val <= min_val:
             return 1.0
         elif user_val > max_val:
-            return 0.0
+            return max(0.0, 1 - (user_val - max_val) / range_val)
         else:
-            return 1 - (user_val - min_val) / (max_val - min_val)
+            return 1 - (user_val - min_val) / range_val
 
     elif condition == "greater than":
         if user_val >= max_val:
             return 1.0
         elif user_val < min_val:
-            return 0.0
+            return max(0.0, 1 - (min_val - user_val) / range_val)
         else:
-            return 1 - (max_val - user_val) / (max_val - min_val)
+            return 1 - (max_val - user_val) / range_val
 
     elif condition == "equal to":
-        center = (min_val + max_val) / 2
-        return max(0.0, 1 - abs(user_val - center) / (max_val - min_val))
+        diff = abs(user_val - center)
+        normalized = 1 - (diff / range_val)
+        if diff == 0:
+            return 1.05  # Bonus
+        else:
+            return max(0.0, normalized)
 
-    else:
-        return 0.0
+    return 0.0
 
 def generate_excel_template():
     columns = ["Name"]
@@ -237,16 +246,16 @@ if st.session_state.show_weights:
             total_score = 0
             for prop, (condition, user_val) in selected_filters.items():
                 min_val, max_val = st.session_state.datasets[name][prop]
-                weight = weights[prop]
+                weight = weights[prop] / 100  # normalize ağırlık
 
                 score = evaluate_score(condition, user_val, min_val, max_val)
-                total_score += score * (weight / 100)
+                total_score += score * weight
 
             scores[name] = round(total_score * 100, 2)  # 100 üzerinden skor
 
         sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
-        st.subheader("🏆 Ranked Composites by Condition-Sensitive Scoring")
+        st.subheader("🏆 Ranked Composites by Ideal Scoring Model")
         for i, (name, score) in enumerate(sorted_scores, 1):
             st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
 
