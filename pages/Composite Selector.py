@@ -250,33 +250,6 @@ if st.session_state.show_weights:
         for i, (name, score) in enumerate(sorted_scores, 1):
             st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
 
-        for name in matching_polymers:
-            total_score = 0
-            for prop, (condition, user_val) in selected_filters.items():
-                min_val, max_val = st.session_state.datasets[name][prop]
-                weight = weights[prop]
-
-                if min_val == max_val or user_val is None:
-                    continue
-
-                if user_val < min_val or user_val > max_val:
-                    score = 0
-                else:
-                    center = (min_val + max_val) / 2
-                    score = 1 - abs(user_val - center) / (max_val - min_val)
-
-                total_score += score * weight
-
-            final_score = round(total_score, 2)
-            scores[name] = final_score
-
-        # Sıralama ve gösterim
-        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-
-        st.subheader("🏆 Ranked Composites by 100-Point Weighted Score")
-        for i, (name, score) in enumerate(sorted_scores, 1):
-            st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
-
 import plotly.graph_objects as go
 
 if "scores" in locals() and scores:
