@@ -1,11 +1,6 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO
-from PIL import Image
-
-logo = Image.open("images/logo.jpg")
-st.image(logo, width=100)  # Gerekirse genişliği değiştir
-st.markdown("<h1 style='color: white;'>Composite Selector</h1>", unsafe_allow_html=True)
 
 def evaluate_score(condition, user_val, min_val, max_val):
     if user_val is None or min_val is None or max_val is None:
