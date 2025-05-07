@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from io import BytesIO
+from plotly.graph_objects import Figure, Scatterpolar
 
 def evaluate_score(condition, user_val, min_val, max_val):
     if user_val is None or min_val is None or max_val is None:
