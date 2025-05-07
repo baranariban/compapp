@@ -175,12 +175,12 @@ for polymer, properties_dict in st.session_state.datasets.items():
         min_val, max_val = properties_dict[prop]
 
         if condition == "smaller than":
-            if not (min_val <= user_val <= max_val or max_val < user_val):
+            if min_val > user_val:
                 match = False
                 break
 
         if condition == "larger than":
-            if user_val > max_val:
+            if max_val < user_val:
                 match = False
                 break
 
@@ -260,6 +260,9 @@ if st.session_state.show_weights:
             st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
 
 import plotly.graph_objects as go
+
+if "scores" not in locals() or not scores:
+    st.warning("⚠️ Please perform scoring first to visualize the graph.")
 
 if "scores" in locals() and scores:
     if st.button("📊 Show stacked bar chart of scores"):
