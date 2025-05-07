@@ -2,6 +2,36 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 
+def evaluate_score(condition, user_val, min_val, max_val):
+    if min_val == max_val:
+        return 1.0 if user_val == min_val else 0.0
+
+    if user_val is None:
+        return 0.0
+
+    if condition == "smaller than":
+        if user_val <= min_val:
+            return 1.0
+        elif user_val > max_val:
+            return 0.0
+        else:
+            return 1 - (user_val - min_val) / (max_val - min_val)
+
+    elif condition == "greater than":
+        if user_val >= max_val:
+            return 1.0
+        elif user_val < min_val:
+            return 0.0
+        else:
+            return 1 - (max_val - user_val) / (max_val - min_val)
+
+    elif condition == "equal to":
+        center = (min_val + max_val) / 2
+        return max(0.0, 1 - abs(user_val - center) / (max_val - min_val))
+
+    else:
+        return 0.0
+
 def generate_excel_template():
     columns = ["Name"]
     for prop in properties:
@@ -203,6 +233,22 @@ if st.session_state.show_weights:
     else:
         # Skor hesaplama
         scores = {}
+        for name in matching_polymers:
+            total_score = 0
+            for prop, (condition, user_val) in selected_filters.items():
+                min_val, max_val = st.session_state.datasets[name][prop]
+                weight = weights[prop]
+
+                score = evaluate_score(condition, user_val, min_val, max_val)
+                total_score += score * (weight / 100)
+
+            scores[name] = round(total_score * 100, 2)  # 100 üzerinden skor
+
+        sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+        st.subheader("🏆 Ranked Composites by Condition-Sensitive Scoring")
+        for i, (name, score) in enumerate(sorted_scores, 1):
+            st.write(f"{i}. **{name}** — Score: {score:.2f} / 100")
 
         for name in matching_polymers:
             total_score = 0
